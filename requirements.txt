@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+celery
+mysql-connector-python
+sqlalchemy
+aiohttp
+pydantic-settings
+pydantic
+spacy
+transformers
+pytest
+httpx

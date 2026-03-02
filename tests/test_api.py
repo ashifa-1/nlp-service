@@ -51,3 +51,15 @@ def test_db_functions():
         assert fetched.input_text == "abc"
     finally:
         db.close()
+
+
+def test_status_endpoint_after_creation(monkeypatch):
+    # create a task manually then check endpoint
+    db = SessionLocal()
+    try:
+        task = create_task(db, "hello", "sentiment_analysis")
+        resp = client.get(f"/api/nlp/status/{task.task_id}")
+        assert resp.status_code == 200
+        assert resp.json()['status'] == 'PENDING'
+    finally:
+        db.close()

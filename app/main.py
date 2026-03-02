@@ -6,8 +6,14 @@ from .tasks import process_nlp_task
 import uuid
 import logging
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+# simple health check
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 @app.post("/api/nlp/process", response_model=ProcessResponse, status_code=status.HTTP_202_ACCEPTED)
 def submit_task(request: ProcessRequest, db: Session = Depends(get_db)):

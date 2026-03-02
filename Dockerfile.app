@@ -11,8 +11,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# download spacy model during build to avoid runtime latency
+RUN python -m spacy download en_core_web_sm || true
+
 COPY app/ ./app/
 COPY worker/ ./worker/
+COPY init_db.py ./
+
+# ensure database tables exist when container starts
+ENTRYPOINT ["sh", "-c", "python init_db.py &&"]
 
 EXPOSE 8000
 

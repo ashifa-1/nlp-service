@@ -64,12 +64,14 @@ or for failures:
 
 ## Architecture Overview
 
-The system consists of four main components:
+The system consists of four main components connected via a shared Docker network:
 
-1. **FastAPI application** - exposes REST endpoints and enqueues tasks
-2. **Celery worker** - consumes tasks from RabbitMQ and executes NLP jobs
-3. **RabbitMQ broker** - message queue between API and workers
-4. **MySQL database** - stores task metadata and results
+1. **FastAPI application** - a lightweight Python web server exposing REST endpoints (`/api/nlp/process`, `/api/nlp/status/{task_id}`) and performing input validation. It creates database records and publishes tasks to the queue.
+2. **Celery worker** - one or more workers listening on RabbitMQ, executing NLP jobs asynchronously. Models are pre-loaded on startup to optimize performance.
+3. **RabbitMQ broker** - reliable AMQP message queue used by Celery for task distribution. Tasks are acknowledged only after successful execution.
+4. **MySQL database** - central store for task metadata (UUID, text, type, status, results, error messages, timestamps), accessed via SQLAlchemy. Both the API and workers share this database.
+
+> A diagram could be inserted here showing arrows from FastAPI to RabbitMQ and DB, and RabbitMQ to Celery, with DB as shared storage.
 
 Docker Compose orchestrates all services on a single network.
 

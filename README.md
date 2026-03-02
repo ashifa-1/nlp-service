@@ -4,12 +4,12 @@ An asynchronous backend for natural language processing tasks using FastAPI, Cel
 
 ## Features
 
-- 🧠 Sentiment analysis and named entity recognition (NER) using HuggingFace transformers
-- 🚀 FastAPI REST endpoints for task submission and status polling
-- 🔄 Celery with RabbitMQ for asynchronous task processing
-- 💾 MySQL for persistent task metadata storage via SQLAlchemy
-- 📦 Fully containerized with Docker & docker-compose
-- 🧪 Unit and integration tests using pytest
+-  Sentiment analysis and named entity recognition (NER) using HuggingFace transformers
+-  FastAPI REST endpoints for task submission and status polling
+-  Celery with RabbitMQ for asynchronous task processing
+-  MySQL for persistent task metadata storage via SQLAlchemy
+-  Fully containerized with Docker & docker-compose
+-  Unit and integration tests using pytest
 
 ## Quickstart
 
@@ -94,9 +94,3 @@ Docker Compose also provides a `test` service (see `docker-compose.yml`) to run 
 ## Deployment
 
 Use the provided `docker-compose.yml` to deploy all components together. Ensure environment variables are set (via `.env`).
-
-## Screenshots & Demo
-
-*(Include screenshots of `docker-compose up` and Swagger UI here)*
-
-Demo video: https://example.com/demo (replace with actual link)

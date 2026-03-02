@@ -4,7 +4,9 @@ from .models import ProcessRequest, ProcessResponse, StatusResponse
 from .database import get_db, create_task, get_task
 from .tasks import process_nlp_task
 import uuid
+import logging
 
+logger = logging.getLogger(__name__)
 app = FastAPI()
 
 @app.post("/api/nlp/process", response_model=ProcessResponse, status_code=status.HTTP_202_ACCEPTED)
@@ -12,11 +14,18 @@ def submit_task(request: ProcessRequest, db: Session = Depends(get_db)):
     try:
         task = create_task(db, request.text, request.task_type)
     except Exception as e:
+        logger.exception("error creating task")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Failed to create task")
 
     # enqueue celery task
-    process_nlp_task.delay(str(task.task_id), request.text, request.task_type)
+    try:
+        process_nlp_task.delay(str(task.task_id), request.text, request.task_type)
+    except Exception as exc:
+        logger.exception("failed to send task to queue")
+        # do not expose details to client
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Could not queue NLP task")
 
     return ProcessResponse(task_id=task.task_id, status=task.status)
 

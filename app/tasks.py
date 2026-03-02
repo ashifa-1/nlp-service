@@ -2,6 +2,9 @@ from celery import Celery
 from .database import SessionLocal, update_task_status
 from .nlp_models import load_nlp_models, perform_sentiment_analysis, perform_ner
 from .config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 # initialize celery
 celery_app = Celery('nlp_tasks', broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
@@ -35,7 +38,9 @@ def process_nlp_task(self, task_id: str, text: str, task_type: str):
         update_task_status(db, task_id, "COMPLETED", result=result)
     except Exception as e:
         error_msg = f"NLP processing failed: {e}"
+        logger.exception("task %s failed", task_id)
         update_task_status(db, task_id, "FAILED", error_message=error_msg)
+        # re-raise to let celery record failure
         raise
     finally:
         db.close()

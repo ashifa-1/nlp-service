@@ -91,7 +91,13 @@ Run tests inside container or locally:
 pytest
 ```
 
-Docker Compose also provides a `test` service (see `docker-compose.yml`) to run the suite.
+Docker Compose also provides a `test` service (see `docker-compose.yml`) to run the suite. For example:
+
+```bash
+docker-compose run --rm test
+```
+
+This allows CI pipelines or reviewers to easily execute the full test suite in a clean environment.  
 
 ## Deployment
 

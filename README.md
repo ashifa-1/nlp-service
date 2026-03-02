@@ -29,6 +29,8 @@ An asynchronous backend for natural language processing tasks using FastAPI, Cel
 
 The FastAPI app will be available at `http://localhost:8000` and Swagger UI at `http://localhost:8000/docs`.
 
+> **Note:** the `test` service defined in docker-compose runs the full pytest suite inside the container, allowing automated CI tools to verify functionality with `docker-compose run test`.
+
 ## API Usage
 
 ### Submit a task

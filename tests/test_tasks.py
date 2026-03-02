@@ -29,3 +29,17 @@ def test_load_models_once(monkeypatch):
     load_models_on_startup(None)
     load_models_on_startup(None)
     assert called['count'] == 2  # signal called each time, but real tasks should reuse global variable
+
+
+def test_task_unknown_type(monkeypatch):
+    # mimic database session but only test failure branch
+    from app.tasks import process_nlp_task
+    # create dummy session
+    class DummySession:
+        def close(self):
+            pass
+    # monkeypatch SessionLocal to return dummy
+    monkeypatch.setattr('app.tasks.SessionLocal', lambda: DummySession())
+    # call with invalid type, should raise ValueError and update_task_status to FAILED
+    with pytest.raises(ValueError):
+        process_nlp_task(None, "id", "text", "invalid_type")
